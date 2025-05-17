@@ -6,6 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		889919632DD7D5F9005FE0C3 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 889919622DD7D5F9005FE0C3 /* FirebaseCore */; };
+		889919652DD7D608005FE0C3 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 889919642DD7D608005FE0C3 /* FirebaseFirestore */; };
+		8899196D2DD7D8F2005FE0C3 /* CodeScanner in Frameworks */ = {isa = PBXBuildFile; productRef = 8899196C2DD7D8F2005FE0C3 /* CodeScanner */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		8899193A2DD7CC06005FE0C3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +58,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				889919632DD7D5F9005FE0C3 /* FirebaseCore in Frameworks */,
+				889919652DD7D608005FE0C3 /* FirebaseFirestore in Frameworks */,
+				8899196D2DD7D8F2005FE0C3 /* CodeScanner in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +87,7 @@
 				8899192E2DD7CC05005FE0C3 /* DonationTracker */,
 				8899193C2DD7CC06005FE0C3 /* DonationTrackerTests */,
 				889919462DD7CC06005FE0C3 /* DonationTrackerUITests */,
+				889919612DD7D5F9005FE0C3 /* Frameworks */,
 				8899192D2DD7CC05005FE0C3 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -90,6 +100,13 @@
 				889919432DD7CC06005FE0C3 /* DonationTrackerUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		889919612DD7D5F9005FE0C3 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -112,6 +129,9 @@
 			);
 			name = DonationTracker;
 			packageProductDependencies = (
+				889919622DD7D5F9005FE0C3 /* FirebaseCore */,
+				889919642DD7D608005FE0C3 /* FirebaseFirestore */,
+				8899196C2DD7D8F2005FE0C3 /* CodeScanner */,
 			);
 			productName = DonationTracker;
 			productReference = 8899192C2DD7CC05005FE0C3 /* DonationTracker.app */;
@@ -195,6 +215,10 @@
 			);
 			mainGroup = 889919232DD7CC05005FE0C3;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				889919602DD7D4EC005FE0C3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				8899196B2DD7D8F2005FE0C3 /* XCRemoteSwiftPackageReference "CodeScanner" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 8899192D2DD7CC05005FE0C3 /* Products */;
 			projectDirPath = "";
@@ -322,6 +346,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "In order to scan item barcodes";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -380,6 +405,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "In order to scan item barcodes";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -558,6 +584,43 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		889919602DD7D4EC005FE0C3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.12.0;
+			};
+		};
+		8899196B2DD7D8F2005FE0C3 /* XCRemoteSwiftPackageReference "CodeScanner" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/twostraws/CodeScanner";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		889919622DD7D5F9005FE0C3 /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 889919602DD7D4EC005FE0C3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		889919642DD7D608005FE0C3 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 889919602DD7D4EC005FE0C3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		8899196C2DD7D8F2005FE0C3 /* CodeScanner */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8899196B2DD7D8F2005FE0C3 /* XCRemoteSwiftPackageReference "CodeScanner" */;
+			productName = CodeScanner;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 889919242DD7CC05005FE0C3 /* Project object */;
 }
