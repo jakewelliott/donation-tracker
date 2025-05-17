@@ -2,7 +2,7 @@
 //  DonationTrackerTests.swift
 //  DonationTrackerTests
 //
-//  Created by Jacob Elliott on 5/16/25.
+//  Created by Jake Elliott on 5/16/25.
 //
 
 import Testing
