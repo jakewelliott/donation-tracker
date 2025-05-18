@@ -14,9 +14,7 @@ struct ManualEntryView: View {
     @State private var name = ""
     @State private var brand = ""
     @State private var value = ""
-    @State private var quantity = "1"
-    @State private var casePack = ""
-    // For simplicity, image upload is omitted here
+    @State private var priceSource = ""
 
     var body: some View {
         Form {
@@ -25,19 +23,16 @@ struct ManualEntryView: View {
             TextField("Brand", text: $brand)
             TextField("Value", text: $value)
                 .keyboardType(.decimalPad)
-            TextField("Quantity", text: $quantity)
-                .keyboardType(.numberPad)
-            TextField("Case Pack", text: $casePack)
-                .keyboardType(.numberPad)
+            TextField("Price Source", text: $priceSource)
             Button("Save Item") {
                 let item = InventoryItem(
                     upc: upc,
                     brand: brand,
                     name: name,
                     value: Double(value) ?? 0,
-                    quantity: Int(quantity) ?? 1,
-                    imageUrl: nil,
-                    casePack: Int(casePack)
+                    quantity: 1,
+                    imageURL: nil,
+                    priceSource: priceSource
                 )
                 onSave(item)
             }

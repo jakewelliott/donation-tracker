@@ -14,6 +14,6 @@ struct InventoryItem: Identifiable, Codable {
     var name: String
     var value: Double
     var quantity: Int
-    var imageUrl: String?
-    var casePack: Int?
+    var imageURL: String?
+    var priceSource: String?
 }
