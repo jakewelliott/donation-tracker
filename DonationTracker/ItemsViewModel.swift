@@ -29,6 +29,23 @@ class ItemsViewModel: ObservableObject {
             } ?? []
         }
     }
+    
+    func updateItem(_ item: InventoryItem) {
+            do {
+                try db.collection("items").document(item.upc).setData(from: item)
+            } catch {
+                print("Failed to update item: \(error)")
+            }
+        }
+
+        func deleteItem(_ item: InventoryItem, completion: (() -> Void)? = nil) {
+            db.collection("items").document(item.upc).delete { error in
+                if let error = error {
+                    print("Failed to delete item: \(error)")
+                }
+                completion?()
+            }
+        }
 
     deinit {
         listener?.remove()
