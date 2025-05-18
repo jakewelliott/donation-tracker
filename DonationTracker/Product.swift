@@ -13,6 +13,8 @@ struct Product: Identifiable {
     let name: String
     let brand: String?
     let retailPrice: Double?
+    let priceSource: String?
+    let imageURL: String?
 }
 
 struct UPCResponse: Codable {
@@ -24,9 +26,11 @@ struct UPCItem: Codable {
     let title: String
     let brand: String?
     let offers: [UPCOffer]?
+    let images: [String]?
 }
 
 struct UPCOffer: Codable {
     let price: Double?
     let updated_t: Int?
+    let merchant: String?
 }

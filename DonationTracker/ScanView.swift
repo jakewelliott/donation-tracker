@@ -13,6 +13,7 @@ struct ScanView: View {
     @EnvironmentObject var itemsViewModel: ItemsViewModel
 
     @State private var isPresentingScanner = true
+    @State private var isActiveScreen = true
     @State private var scannedCode: String?
     @State private var showManualEntry = false
     @State private var searchResults: [Product] = []
@@ -20,53 +21,66 @@ struct ScanView: View {
     @State private var showSuccess = false
 
     var body: some View {
-        VStack(spacing: 24) {
-            Button("Start Scanning") {
-                isPresentingScanner = true
-            }
-            .font(.title)
-            .padding()
-
-            if let code = scannedCode {
-                Text("Scanned UPC: \(code)")
-            }
-
-            if isLoading {
-                ProgressView("Searching Amazon…")
-            }
-
-            if !searchResults.isEmpty {
-                List(searchResults) { product in
-                    Button {
-                        handleProductSelection(product)
-                    } label: {
-                        VStack(alignment: .leading) {
-                            Text(product.name).bold()
-                            if let brand = product.brand {
-                                Text(brand)
-                            }
-                            if let price = product.retailPrice {
-                                Text(String(format: "Price: $%.2f", price))
+        ZStack {
+            VStack(spacing: 24) {
+                Button("Scan Again") {
+                    isPresentingScanner = true
+                }
+                .font(.title)
+                .padding()
+                
+                if let code = scannedCode {
+                    Text("Scanned UPC: \(code)")
+                }
+                
+                if isLoading {
+                    ProgressView("Searching for item…")
+                }
+                
+                if !searchResults.isEmpty {
+                    List(searchResults) { product in
+                        Button {
+                            handleProductSelection(product)
+                        } label: {
+                            VStack(alignment: .leading) {
+                                Text(product.name).bold()
+                                if let brand = product.brand {
+                                    Text(brand)
+                                }
+                                if let price = product.retailPrice {
+                                    Text(String(format: "Price: $%.2f", price))
+                                }
                             }
                         }
                     }
                 }
+                
+                if showManualEntry {
+                    ManualEntryView(upc: scannedCode ?? "", onSave: handleManualEntry)
+                }
+                
+                if showSuccess {
+                    Image(systemName: "checkmark.circle.fill")
+                        .resizable()
+                        .frame(width: 80, height: 80)
+                        .foregroundColor(.green)
+                        .transition(.scale)
+                }
             }
-
-            if showManualEntry {
-                ManualEntryView(upc: scannedCode ?? "", onSave: handleManualEntry)
-            }
-
-            if showSuccess {
-                Image(systemName: "checkmark.circle.fill")
-                    .resizable()
-                    .frame(width: 80, height: 80)
-                    .foregroundColor(.green)
-                    .transition(.scale)
+            if isPresentingScanner {
+                Color.black.opacity(0.5) // Optional: dim background
+                                .ignoresSafeArea()
+                CodeScannerView(codeTypes: [.ean13, .upce, .ean8], completion: handleScan)
+                    .transition(.move(edge: .bottom))
             }
         }
-        .sheet(isPresented: $isPresentingScanner) {
-            CodeScannerView(codeTypes: [.ean13, .upce, .ean8], completion: handleScan)
+        .animation(.easeInOut, value: isPresentingScanner)
+        .onDisappear {
+            isActiveScreen = false
+                isPresentingScanner = false
+            }
+        .onAppear {
+            isActiveScreen = true
         }
     }
     
@@ -75,19 +89,23 @@ struct ScanView: View {
             upc: scannedCode ?? "",
             name: product.name,
             brand: product.brand ?? "",
-            value: product.retailPrice ?? 0
+            value: product.retailPrice ?? 0,
+            priceSource: product.priceSource ?? "",
+            imageUrl: product.imageURL ?? ""
         )
     }
 
     // MARK: - Scan Handler
     func handleScan(result: Result<ScanResult, ScanError>) {
         isPresentingScanner = false
-        switch result {
-        case .success(let res):
-            scannedCode = res.string
-            handleScannedUPC(res.string)
-        case .failure:
-            scannedCode = nil
+        if isActiveScreen {
+            switch result {
+            case .success(let res):
+                scannedCode = res.string
+                handleScannedUPC(res.string)
+            case .failure:
+                scannedCode = nil
+            }
         }
     }
 
@@ -154,12 +172,16 @@ struct ScanView: View {
                                 })
                             
                             let offerPrice = mostRecentOffer?.price
+                            let offerSource = mostRecentOffer?.merchant
+                            let firstImageUrl = item.images?.first
                             
                             return Product(
                                 productId: item.upc ?? "",
                                 name: item.title,
                                 brand: item.brand,
-                                retailPrice: offerPrice
+                                retailPrice: offerPrice,
+                                priceSource: offerSource,
+                                imageURL: firstImageUrl
                             )
                         }
                     }
@@ -178,14 +200,14 @@ struct ScanView: View {
 
 
     func handleAmazonSelection(_ product: Product) {
-        updateInventory(upc: scannedCode ?? "", name: product.name, brand: product.brand ?? "", value: product.retailPrice ?? 0)
+        updateInventory(upc: scannedCode ?? "", name: product.name, brand: product.brand ?? "", value: product.retailPrice ?? 0, priceSource: product.priceSource ?? "", imageUrl: product.imageURL ?? "")
     }
 
     func handleManualEntry(_ item: InventoryItem) {
         updateInventory(item: item)
     }
 
-    func updateInventory(upc: String, name: String, brand: String, value: Double) {
+    func updateInventory(upc: String, name: String, brand: String, value: Double, priceSource: String, imageUrl: String) {
         let db = Firestore.firestore()
         let docRef = db.collection("items").document(upc)
         docRef.getDocument { (document, error) in
@@ -200,8 +222,8 @@ struct ScanView: View {
                     name: name,
                     value: value,
                     quantity: 1,
-                    imageUrl: nil,
-                    casePack: nil
+                    imageURL: imageUrl,
+                    priceSource: priceSource,
                 )
                 try? docRef.setData(from: item)
             }
@@ -228,9 +250,13 @@ struct ScanView: View {
         searchResults = []
         showManualEntry = false
         showSuccess = true
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
             showSuccess = false
             scannedCode = nil
+            if isActiveScreen {
+                isPresentingScanner = true
+            }
+            
         }
     }
 }

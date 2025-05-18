@@ -15,7 +15,7 @@ struct ItemsView: View {
             List(viewModel.items) { item in
                 HStack(alignment: .top) {
                     // Load image asynchronously if imageUrl is available
-                    if let imageUrl = item.imageUrl, let url = URL(string: imageUrl) {
+                    if let imageUrl = item.imageURL, let url = URL(string: imageUrl) {
                         AsyncImage(url: url) { image in
                             image.resizable()
                                  .aspectRatio(contentMode: .fit)
